@@ -1,5 +1,6 @@
 const { app, BrowserWindow, ipcMain } = require('electron');                //Imports. Pulling "app", "BrowserWindow", and "ipcMain" tools out of Electron package
 const path = require('node:path');                                          //Built-in Node tool for building filepaths
+const { DatabaseSync } = require('node:sqlite');                            //Built-in Node tool for SQLite database access
 
 function createWindow() {                                                   //Creates a window of xWidth by yHeight
   const win = new BrowserWindow({
@@ -15,5 +16,11 @@ ipcMain.handle('update-database', async () => {                             //DB
   return 'Main process got the request';
 });
 
-app.whenReady().then(createWindow);                                         //Electron is a bit slow to start. When ready, calls "createWindow"
+app.whenReady().then(() => {                                                //Electron is a bit slow to start. When ready, spins up a db and calls "createWindow"
+  const dbPath = path.join(app.getPath('userData'), 'whaddayaPlain.db');
+  const db = new DatabaseSync(dbPath);
+  const row = db.prepare('SELECT sqlite_version() AS version').get();
+  console.log('SQLite version', row.version, 'at', dbPath);
+  createWindow();
+});
 app.on('window-all-closed', () =>  app.quit());                              //quits app if all windows are closed
