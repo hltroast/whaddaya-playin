@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">                                                                          <!-- Character set to make sure that odd characters don't break anything-->
+        <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">     <!-- Page will only load scripts from my own app files, no security warning in console-->
+        <title>Whaddaya Playin'?</title>                                                                <!-- Window title text-->
+    </head>
+    <body>
+        <h1>Whaddaya Playin'?</h1>
+        <p>Electron is running.</p>
+
+        <script src="renderer.js"></script>                                                             <!-- Load the front end after page elements exist-->
+    </body>
+</html>
