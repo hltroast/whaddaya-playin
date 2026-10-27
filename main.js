@@ -1,6 +1,6 @@
 const { app, BrowserWindow, ipcMain } = require('electron');                //Imports. Pulling "app", "BrowserWindow", and "ipcMain" tools out of Electron package
 const path = require('node:path');                                          //Built-in Node tool for building filepaths
-const { DatabaseSync } = require('node:sqlite');                            //Built-in Node tool for SQLite database access
+const { openDatabase } = require('./database');                            //Built-in Node tool for SQLite database access
 
 function createWindow() {                                                   //Creates a window of xWidth by yHeight
   const win = new BrowserWindow({
@@ -18,7 +18,7 @@ ipcMain.handle('update-database', async () => {                             //DB
 
 app.whenReady().then(() => {                                                //Electron is a bit slow to start. When ready, spins up a db and calls "createWindow"
   const dbPath = path.join(app.getPath('userData'), 'whaddayaPlayin.db');
-  const db = new DatabaseSync(dbPath);
+  const db = openDatabase(dbPath);
   const row = db.prepare('SELECT sqlite_version() AS version').get();
   console.log('SQLite version', row.version, 'at', dbPath);
   createWindow();
