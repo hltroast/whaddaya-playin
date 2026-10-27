@@ -17,7 +17,7 @@ ipcMain.handle('update-database', async () => {                             //DB
 });
 
 app.whenReady().then(() => {                                                //Electron is a bit slow to start. When ready, spins up a db and calls "createWindow"
-  const dbPath = path.join(app.getPath('userData'), 'whaddayaPlain.db');
+  const dbPath = path.join(app.getPath('userData'), 'whaddayaPlayin.db');
   const db = new DatabaseSync(dbPath);
   const row = db.prepare('SELECT sqlite_version() AS version').get();
   console.log('SQLite version', row.version, 'at', dbPath);
