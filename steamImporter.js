@@ -50,4 +50,25 @@ class SteamImporter{
     }
 }
 
-module.exports = {SteamImporter};
+const STORE_APP_TYPE_GAME = 0;                                                                              //0 Game, 1 Demo, 4 DLC, 6 Software
+const MIN_REVIEWS = 100;
+
+function rejection(item){
+    let itemType;
+    if (item.success !== 1) return 'no store data';
+    if (item.type !== STORE_APP_TYPE_GAME){ 
+        switch(item.type){
+            case 1: itemType = 'a demo'; break;
+            case 4: itemType = 'DLC'; break;
+            case 6: itemType = 'software'; break;
+            default: itemType = `...no freakin' clue`;
+        
+        }
+        return `Not a game, it's (${itemType})`;
+    }
+    const reviewCount = item.reviews?.summary_filtered?.review_count ?? 0;
+    if(reviewCount < MIN_REVIEWS) return `only ${reviewCount} reviews; game disqualified`;
+    return null;
+}
+
+module.exports = {SteamImporter, rejection};

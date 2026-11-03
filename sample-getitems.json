@@ -1,0 +1,224 @@
+{
+  "store_items": [
+    {
+      "item_type": 0,
+      "id": 570940,
+      "success": 1,
+      "visible": true,
+      "name": "DARK SOULS™: REMASTERED",
+      "store_url_path": "app/570940/DARK_SOULS_REMASTERED",
+      "store_url_slug": "DARK_SOULS_REMASTERED",
+      "appid": 570940,
+      "type": 0,
+      "tagids": [
+        29482,
+        4604,
+        122,
+        4026,
+        19,
+        4342,
+        1684,
+        4166,
+        1756,
+        4231,
+        3854,
+        21,
+        3834,
+        1697,
+        3859,
+        1742,
+        4711,
+        4747,
+        7948,
+        1685
+      ],
+      "categories": {
+        "supported_player_categoryids": [
+          2,
+          1
+        ],
+        "feature_categoryids": [
+          22,
+          41,
+          42,
+          43,
+          62
+        ],
+        "controller_categoryids": [
+          28
+        ]
+      },
+      "reviews": {
+        "summary_filtered": {
+          "review_count": 102232,
+          "percent_positive": 92,
+          "review_score": 8,
+          "review_score_label": "Very Positive"
+        },
+        "summary_language_specific": {
+          "review_count": 49813,
+          "percent_positive": 91,
+          "review_score": 8,
+          "review_score_label": "Very Positive"
+        }
+      },
+      "basic_info": {
+        "short_description": "Then, there was fire. Re-experience the critically acclaimed, genre-defining game that started it all. Beautifully remastered, return to Lordran in stunning high-definition detail running at 60fps.",
+        "publishers": [
+          {
+            "name": "FromSoftware, Inc.",
+            "creator_clan_account_id": 45188208
+          },
+          {
+            "name": "Bandai Namco Entertainment",
+            "creator_clan_account_id": 33042543
+          }
+        ],
+        "developers": [
+          {
+            "name": "QLOC"
+          },
+          {
+            "name": "FromSoftware, Inc.",
+            "creator_clan_account_id": 45188208
+          }
+        ]
+      },
+      "tags": [
+        {
+          "tagid": 29482,
+          "weight": 1185
+        },
+        {
+          "tagid": 4604,
+          "weight": 754
+        },
+        {
+          "tagid": 122,
+          "weight": 695
+        },
+        {
+          "tagid": 4026,
+          "weight": 693
+        },
+        {
+          "tagid": 19,
+          "weight": 634
+        },
+        {
+          "tagid": 4342,
+          "weight": 628
+        },
+        {
+          "tagid": 1684,
+          "weight": 537
+        },
+        {
+          "tagid": 4166,
+          "weight": 498
+        },
+        {
+          "tagid": 1756,
+          "weight": 460
+        },
+        {
+          "tagid": 4231,
+          "weight": 446
+        },
+        {
+          "tagid": 3854,
+          "weight": 395
+        },
+        {
+          "tagid": 21,
+          "weight": 387
+        },
+        {
+          "tagid": 3834,
+          "weight": 360
+        },
+        {
+          "tagid": 1697,
+          "weight": 358
+        },
+        {
+          "tagid": 3859,
+          "weight": 358
+        },
+        {
+          "tagid": 1742,
+          "weight": 354
+        },
+        {
+          "tagid": 4711,
+          "weight": 350
+        },
+        {
+          "tagid": 4747,
+          "weight": 346
+        },
+        {
+          "tagid": 7948,
+          "weight": 277
+        },
+        {
+          "tagid": 1685,
+          "weight": 275
+        }
+      ],
+      "assets": {
+        "asset_url_format": "steam/apps/570940/${FILENAME}?t=1778518110",
+        "main_capsule": "capsule_616x353.jpg",
+        "small_capsule": "capsule_231x87.jpg",
+        "header": "header.jpg",
+        "page_background": "page_bg_generated_v6b.jpg",
+        "hero_capsule": "hero_capsule.jpg",
+        "library_capsule": "library_600x900.jpg",
+        "library_capsule_2x": "library_600x900_2x.jpg",
+        "library_hero": "library_hero.jpg",
+        "community_icon": "d74cfa4f3a2070f45ad8ce44e5f61a6507ee00b6",
+        "page_background_path": "app/570940?t=1778518110",
+        "raw_page_background": "page_bg_raw.jpg",
+        "last_modified": 1778518110
+      },
+      "release": {
+        "steam_release_date": 1527116040
+      },
+      "best_purchase_option": {
+        "packageid": 262430,
+        "purchase_option_name": "DARK SOULS: REMASTERED",
+        "final_price_in_cents": "3999",
+        "formatted_final_price": "$39.99",
+        "user_can_purchase_as_gift": true,
+        "hide_discount_pct_for_compliance": false,
+        "included_game_count": 1,
+        "must_purchase_as_set": false,
+        "package_group": "default",
+        "price_cannot_be_displayed_as_discount": false
+      },
+      "purchase_options": [
+        {
+          "packageid": 262430,
+          "purchase_option_name": "DARK SOULS: REMASTERED",
+          "final_price_in_cents": "3999",
+          "formatted_final_price": "$39.99",
+          "user_can_purchase_as_gift": true,
+          "hide_discount_pct_for_compliance": false,
+          "included_game_count": 1,
+          "must_purchase_as_set": false,
+          "package_group": "default",
+          "price_cannot_be_displayed_as_discount": false
+        }
+      ],
+      "package_groups": [
+        {
+          "name": "default"
+        },
+        {
+          "name": "subscriptions",
+          "display_type": 1
+        }
+      ]
+    }
+  ]
+}

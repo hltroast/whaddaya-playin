@@ -49,4 +49,60 @@ function openDatabase(dbPath) {
   return db;
 }
 
-module.exports = { openDatabase };
+function storeTags(db, tags) {
+  const updateInsert = db.prepare(
+    `INSERT INTO Tags (tag_id, tag_name) VALUES (?, ?)
+    ON CONFLICT(tag_id) DO UPDATE SET tag_name = excluded.tag_name`);
+  for (const tag of tags) {
+    updateInsert.run(tag.tagid, tag.name);
+  }
+}
+
+function storeGame(db,item) {
+  const reviews = item.reviews?.summary_filtered;
+  const totalReviews = reviews?.review_count ?? null;
+  const totalPositive = reviews ? Math.round(reviews.review_count * reviews.percent_positive/100) : null;
+  const reviewScore =  totalReviews ? totalPositive / totalReviews : null;
+
+  const releaseSeconds = item.release?.steam_release_date;
+  const releaseDate = releaseSeconds ? new Date(releaseSeconds*1000).toISOString().slice(0,10) : null;
+  
+  const priceCents = item.best_purchase_option?.final_price_in_cents;
+  const listedPrice = priceCents ? Number(priceCents)/100 : null;
+
+  const capsule = item.assets ? item.assets.asset_url_format.replace('${FILENAME}', item.assets.main_capsule) : null;
+
+  const developers = JSON.stringify((item.basic_info?.developers ?? []).map(d => d.name));
+  const publishers = JSON.stringify((item.basic_info?.publishers ?? []).map(p => p.name));
+
+db.exec('BEGIN');
+try{
+  db.prepare(
+    `INSERT INTO Games (game_id, name, developers, publishers, release_date, listed_price, capsule_image, total_positive, total_reviews, review_score, last_fetched)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
+    ON CONFLICT(game_id) DO UPDATE SET
+      name = excluded.name,
+      developers = excluded.developers,
+      publishers = excluded.publishers,
+      release_date = excluded.release_date,
+      listed_price = excluded.listed_price,
+      capsule_image = excluded.capsule_image,
+      total_positive = excluded.total_positive,
+      total_reviews = excluded.total_reviews,
+      review_score = excluded.review_score,
+      last_fetched = excluded.last_fetched`).run(item.appid, item.name, developers, publishers, releaseDate, listedPrice, capsule, totalPositive, totalReviews, reviewScore);
+
+  db.prepare('DELETE FROM GameTags WHERE game_id = ?').run(item.appid);
+  const insertTag = db.prepare('INSERT INTO GameTags (game_id, tag_id, score) VALUES (?, ?, ?)');
+  (item.tags ?? []).forEach((tag, i) => {
+    insertTag.run(item.appid, tag.tagid, 20-i);
+  });
+
+  db.exec('COMMIT');
+  } catch(error) {
+  db.exec('ROLLBACK');
+  throw error;
+  }
+}
+
+module.exports = { openDatabase, storeTags, storeGame };
