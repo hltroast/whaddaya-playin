@@ -9,8 +9,14 @@
         <h1>Whaddaya Playin'?</h1>
         <p>Electron is running.</p>
 
-        <button id="updateBtn">Update Database</button>                                                <!-- Database update button-->
+        <button id="updateBtn">Update Database</button>                                                 <!-- Database update button-->
         <p id="status"></p>
+
+        <h2>Find Similar Games</h2>
+        <input id="searchBox" type="text" placeholder="Enter a game name">
+        <button id="recommendBtn">Recommend</button>
+        <p id="matchedGame"></p>
+        <ol id="resultsList"></ol>
 
         <script src="renderer.js"></script>                                                             <!-- Load the front end after page elements exist-->
     </body>
