@@ -25,7 +25,7 @@ ipcMain.handle('update-database', async () => {                                 
 });
 */
 
-//*                                                                                                    //DB update test case showcase, uncomment for live demo
+/*                                                                                                   //DB update test case showcase, uncomment for live demo
 ipcMain.handle('update-database', async () => {                                                       //DB update test use
   try {
     const tagList = await steam.getTagList();
@@ -45,7 +45,36 @@ ipcMain.handle('update-database', async () => {                                 
     return 'Steam request failed: ' + error.message;
   }
 })
-  //*/
+  */
+
+ipcMain.handle('update-database', async () => {                                                       //DB update test use
+  try {
+    const tagList = await steam.getTagList();
+    storeTags(db, tagList.tags);                                                                      
+    const {appIds} = require('./testSet.json');
+    let stored = 0, skipped = 0;
+    
+    for (let i = 0; i < appIds.length; i+=100){
+      const batch = appIds.slice(i, i+100);
+      const result = await steam.getItems(batch);
+      for (const item of result.store_items) {
+        const reason = rejection(item);
+        if (reason) {
+          console.log(`Skipped ${item.id} (${item.name}): ${reason}`);
+          skipped++;
+          continue;
+        }
+        storeGame(db,item);
+        stored++;
+      }
+    } return `Done: ${stored} games stored, ${skipped} skipped.`;
+
+  } catch (error) {
+    console.error(error);
+    return 'Steam request failed: ' + error.message;
+  }
+})
+
 
 app.whenReady().then(() => {                                                                          //Electron is a bit slow to start. When ready, spins up a db and calls "createWindow"
   const dbPath = path.join(app.getPath('userData'), 'whaddayaPlayin.db');
