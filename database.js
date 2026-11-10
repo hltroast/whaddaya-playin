@@ -22,7 +22,8 @@ function openDatabase(dbPath) {
 
     CREATE TABLE IF NOT EXISTS Tags (
       tag_id INTEGER PRIMARY KEY,
-      tag_name   TEXT NOT NULL UNIQUE
+      tag_name   TEXT NOT NULL UNIQUE,
+      idf REAL
     );
 
     CREATE TABLE IF NOT EXISTS GameTags (
@@ -105,4 +106,14 @@ try{
   }
 }
 
-module.exports = { openDatabase, storeTags, storeGame };
+//IDF is computed as ln(N/df) where N is the total number of games and df is the number of games with that tag. This is used to weight tags in the recommendation algorithm.
+
+function computeIdf(db) {
+  db.exec(`
+    UPDATE Tags SET idf = (
+    SELECT ln((SELECT COUNT(*) FROM Games) * 1.0 / COUNT(*))
+    FROM GameTags
+    WHERE GameTags.tag_id = Tags.tag_id)`);
+}
+
+module.exports = { openDatabase, storeTags, storeGame, computeIdf };

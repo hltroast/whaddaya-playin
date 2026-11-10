@@ -1,0 +1,9 @@
+#selectedPanel {
+    width: 500px;
+    margin: 40px auto;
+    padding: 20px;
+    text-align: center;
+    border: 1px solid #888;
+    border-radius: 12px;
+}
+#searchResults li, #selectedList li {cursor: pointer; list-style: none;}

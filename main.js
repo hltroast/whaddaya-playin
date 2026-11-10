@@ -1,13 +1,13 @@
 const { app, BrowserWindow, ipcMain } = require('electron');                                          //Imports. Pulling "app", "BrowserWindow", and "ipcMain" tools out of Electron package
 const path = require('node:path');                                                                    //Built-in Node tool for building filepaths
-const { openDatabase, storeTags, storeGame } = require('./database');                                 //Database functions from database.js
+const { openDatabase, storeTags, storeGame, computeIdf } = require('./database');                                 //Database functions from database.js
 const fs = require('node:fs');                                                                        //Built-in Node tool for file system access
 
 const{ SteamImporter, rejection } = require('./steamImporter');                                       //Pulls in the SteamImporter class from a local file
 const config = require('./config.json');                                                              //Loads the configuration file containing the Steam API key
 const steam = new SteamImporter(config.steamApiKey);                                                  //Creates an instance of the SteamImporter class with the API key from the config file
 
-const {findGame, recommend} = require('./recommender');                                               //Pulls in the recommendation algorithm                      
+const {searchGames, recommend} = require('./recommender');                                               //Pulls in the recommendation algorithm                      
 
 let db;
 
@@ -69,7 +69,9 @@ ipcMain.handle('update-database', async () => {                                 
         storeGame(db,item);
         stored++;
       }
-    } return `Done: ${stored} games stored, ${skipped} skipped.`;
+    } 
+    computeIdf(db);
+    return `Done: ${stored} games stored, ${skipped} skipped.`;
 
   } catch (error) {
     console.error(error);
@@ -77,12 +79,16 @@ ipcMain.handle('update-database', async () => {                                 
   }
 })
 
-ipcMain.handle('recommend', async (event, searchText) => {                                            //Finds game by name, returns closest matches
-  const game = findGame(db, searchText);
-  if (!game) {
-    return { error: `no game found matching "${searchText}"` };
-  }
-  return {input: game, results: recommend(db, game.game_id, 5) };                                     //Returns 3 games
+ipcMain.handle('search-games', async (event, searchText) => {                                         //returns up to 8 games matching the typed text, sorted by total reviews. If no text is typed, returns an empty array
+  if(!searchText.trim()) return [];
+  return searchGames(db,searchText.trim());
+});
+
+ipcMain.handle('recommend', async (event, gameIds) => {                                               //Grabs game IDs, returns 5 recommendations
+  if (gameIds.length === 0) return {error: 'Select at least one game you freakin\' weirdo'};
+  const results = recommend(db, gameIds, 5);
+  //if(results.length) console.table(explainMatch(db, gameIds, results[0].game_id));                    //Prints top result score details in terminal
+  return { results };
 });
 
 

@@ -4,6 +4,7 @@
         <meta charset="UTF-8">                                                                          <!-- Character set to make sure that odd characters don't break anything-->
         <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">     <!-- Page will only load scripts from my own app files, no security warning in console-->
         <title>Whaddaya Playin'?</title>                                                                <!-- Window title text-->
+        <link rel="stylesheet" href="styles.css">                                                       <!-- Load the CSS file for styling-->
     </head>
     <body>
         <h1>Whaddaya Playin'?</h1>
@@ -13,8 +14,16 @@
         <p id="status"></p>
 
         <h2>Find Similar Games</h2>
-        <input id="searchBox" type="text" placeholder="Enter a game name">
-        <button id="recommendBtn">Recommend</button>
+        <input id="searchBox" type="text" placeholder="Enter a game">
+        <ul id="searchResults"></ul>
+
+        <div id="selectedPanel">
+            <h2>Currently Selected Games</h2>
+            <p id = "emptyMessage">How sad, no games to recommend!</p>
+            <ul id="selectedList"></ul>
+            <button id="recommendBtn" disabled>Recommend</button>
+        </div>
+
         <p id="matchedGame"></p>
         <ol id="resultsList"></ol>
 
