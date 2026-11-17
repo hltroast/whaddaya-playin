@@ -37,13 +37,15 @@ function searchGames(db, searchText) {
 
 function recommend(db, gameIds, count) {
     const ids = JSON.stringify(gameIds);
-    return db.prepare(`
-        WITH profile AS (
-            SELECT tag_id, SUM(score) * 1.0 / ? AS score
-            FROM GameTags
-            WHERE game_id IN (SELECT value FROM json_each(?))
-            GROUP BY tag_id
-        )
+    const profileSql =`
+    WITH profile AS (
+        SELECT tag_id, SUM(score) * 1.0 / ? AS score
+        FROM GameTags
+        WHERE game_id IN (SELECT value FROM json_each(?))
+        GROUP BY tag_id
+    )`;
+
+    const results = db.prepare(`${profileSql}
         SELECT g.game_id, g.name, SUM(t.idf * MIN(p.score, cand.score)) AS match_score
         FROM profile p
         JOIN GameTags cand ON cand.tag_id = p.tag_id
@@ -54,6 +56,20 @@ function recommend(db, gameIds, count) {
         GROUP BY g.game_id
         ORDER BY match_score DESC, g.review_score DESC
         LIMIT ?`).all(gameIds.length, ids, ids, count);
+    
+    const { ceiling } = db.prepare(`${profileSql}
+        SELECT SUM(contribution) AS ceiling FROM (
+            SELECT t.idf * p.score AS contribution
+            FROM profile p
+            JOIN Tags t ON t.tag_id = p.tag_id
+            ORDER BY contribution DESC
+            LIMIT 20
+        )`).get(gameIds.length, ids);
+
+    for (const game of results) {
+        game.normalized = ceiling > 0 ? Math.max(1,Math.round(game.match_score / ceiling * 100)) : 1;
+    }
+    return results;
 }
 /* */
 

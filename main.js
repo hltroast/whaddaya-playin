@@ -13,9 +13,12 @@ let db;
 
 function createWindow() {                                                                             //Creates a window of xWidth by yHeight
   const win = new BrowserWindow({
-    width: 1000,
-    height: 700,
-    webPreferences: { preload: path.join(__dirname, 'preload.js') }                                   //Loads the bridge before the page itself
+    width: 1280,
+    height: 1000,
+    minWidth: 900,
+    minHeight: 600,
+    backgroundColor: '#333333',
+    webPreferences: { preload: path.join(__dirname, 'preload.js')}
   });
   win.loadFile('index.html');                                                                         //HTML page gets popped into window
 }
@@ -86,7 +89,7 @@ ipcMain.handle('search-games', async (event, searchText) => {                   
 
 ipcMain.handle('recommend', async (event, gameIds) => {                                               //Grabs game IDs, returns 5 recommendations
   if (gameIds.length === 0) return {error: 'Select at least one game you freakin\' weirdo'};
-  const results = recommend(db, gameIds, 5);
+  const results = recommend(db, gameIds, 10);
   //if(results.length) console.table(explainMatch(db, gameIds, results[0].game_id));                    //Prints top result score details in terminal
   return { results };
 });
@@ -100,3 +103,6 @@ app.whenReady().then(() => {                                                    
   createWindow();
 });
 app.on('window-all-closed', () =>  app.quit());                                                       //quits app if all windows are closed
+
+
+//Add X after selected game to idicate a potential to delete

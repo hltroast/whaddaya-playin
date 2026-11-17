@@ -23,7 +23,10 @@ recommendBtn.addEventListener('click', async() => {
     matchedGame.textContent = `Recommended for you:`;
     for (const game of response.results) {
         const li = document.createElement('li');
-        li.textContent = `${game.name} (Match Score: ${game.match_score.toFixed(1)})`;
+        li.textContent = `${game.name} (Match Score: ${game.match_score.toFixed(1)}) `;
+        const normalized = document.createElement('strong');
+        normalized.textContent = `[${game.normalized}]`;
+        li.appendChild(normalized);
         resultsList.appendChild(li);
     }
 

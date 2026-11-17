@@ -7,26 +7,38 @@
         <link rel="stylesheet" href="styles.css">                                                       <!-- Load the CSS file for styling-->
     </head>
     <body>
-        <h1>Whaddaya Playin'?</h1>
-        <p>Electron is running.</p>
+        <header>
+            <h1 class="logo">Whaddaya Playin'?</h1>
+        </header>
 
-        <button id="updateBtn">Update Database</button>                                                 <!-- Database update button-->
-        <p id="status"></p>
+        <main>
+            <section id="searchColumn">
+                <h2>Find Steam Games</h2>
+                <input id="searchBox" type="text" placeholder="Enter a game" autocomplete="off">
+                <ul id="searchResults"></ul>
+            </section>
 
-        <h2>Find Similar Games</h2>
-        <input id="searchBox" type="text" placeholder="Enter a game">
-        <ul id="searchResults"></ul>
+            <section id="rightColumn">
+                <div id="selectedPanel" class="panel">
+                    <h2>Currently Selected Games</h2>
+                    <p id="emptyMessage">How sad, no games to recommend!</p>
+                    <ul id="selectedList"></ul>
+                    <button id="recommendBtn" disabled>Recommend</button>
+                </div>
+                <div id="resultsPanel" class="panel">
+                    <p id="matchedGame"></p>
+                    <ol id="resultsList"></ol>
+                </div>
+            </section>
+        </main>
 
-        <div id="selectedPanel">
-            <h2>Currently Selected Games</h2>
-            <p id = "emptyMessage">How sad, no games to recommend!</p>
-            <ul id="selectedList"></ul>
-            <button id="recommendBtn" disabled>Recommend</button>
-        </div>
-
-        <p id="matchedGame"></p>
-        <ol id="resultsList"></ol>
-
-        <script src="renderer.js"></script>                                                             <!-- Load the front end after page elements exist-->
+        <footer>
+            <p>Electron is running.</p>
+            <button id="updateBtn">Update Database</button>
+            <p id="status"></p>
+            <button id="tutorialBtn" title="Tutorial">?</button>
+        </footer>
+    <img id="mascot" src="assets/mascot.png" alt="">    
+        <script src="renderer.js"></script>
     </body>
 </html>
