@@ -72,13 +72,23 @@ h2 {
 #searchBox::placeholder {color: var(--text-muted); }
 #searchBox:focus {border-color: var(--accent-detail);}
 
+#searchColumn { position: relative; }
+
 #searchResults {
+    position: absolute; /* Floats over capsule images */
+    left: 0;
+    right: 0;
+    z-index: 10;
     list-style: none;
     margin: 8px 0 0;
-    padding: 0;
+    padding: 4px;
     max-height: 50vh;
     overflow-y: auto;
+    background: var(--input-bg);
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
+#searchResults:empty { display: none; }
 
 /* Panels */
 .panel {
@@ -117,8 +127,6 @@ h2 {
 
 /* Recommend Button */
 #recommendBtn {
-    margin-top: auto;
-    align-self: center;
     padding: 10px 28px;
     background: var(--accent);
     color: var(--accent-text);
@@ -135,6 +143,34 @@ h2 {
     opacity: 0.35;
     cursor: not-allowed;
 }
+
+/* Recommendation Row: Button + Count Box */
+#recommendRow {
+    margin-top: auto;
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    gap: 10px;
+}
+
+#countBox {
+    width: 56px;
+    box-sizing: border-box;
+    padding: 0 8px;
+    background: var(--input-bg);
+    color: var(--text);
+    border: 1px solid transparent;
+    border-radius: 8px;
+    font-family: var(--font-body);
+    font-size: 1rem;
+    text-align: center;
+    outline: none;
+    appearance: textfield;
+}
+#countBox::placeholder { color: var(--text-muted); }
+#countBox:focus { border-color: var(--accent-detail); }
+#countBox::-webkit-outer-spin-button,
+#countBox::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 
 /* Results */
 #resultsPanel { margin-top: 24px; text-align: left; }
@@ -192,7 +228,31 @@ footer p { margin: 0; }
     left: 15px;
     bottom: 0;
     height: 140px;
-    pointer-events: none;
+    cursor: pointer;
     user-select: none;
     -webkit-user-drag: none;
 }
+
+/* Capsule Column */
+#capsuleList {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Two img per row */
+    gap: 14px;
+    align-content: start;
+    margin-top: 24px;
+    max-height: calc(100vh - 360px);
+    overflow-y: auto;
+    padding: 4px 12px 16px 4px;
+}
+
+.capsule {
+    width: 100%;
+    aspect-ratio: 616 / 353;                /* Standard Steam Capsule Image AspRatio */
+    flex-shrink: 0;
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--panel);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.5);
+}
+.capsule img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.capsule.missing img { visibility: hidden; }   /* placeholder for image failure */

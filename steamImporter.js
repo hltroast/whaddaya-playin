@@ -10,12 +10,21 @@ class SteamImporter{
         url.searchParams.set('key', this.apiKey);
         url.searchParams.set('input_json', JSON.stringify(input));
 
-        const response = await fetch(url);
-        if(!response.ok) {
-            throw new Error(`Steam API ${path} failed: HTTP ${response.status}`);
+        const retryDelays = [5000, 30000];
+        for (let attempt = 0; ; attempt++) {
+            try {
+                const response = await fetch(url);
+                if(!response.ok) {
+                    throw new Error(`Steam API ${path} failed: HTTP ${response.status}`);
+                }
+                const data = await response.json();
+                return data.response;
+            } catch (error) {
+                if (attempt >= retryDelays.length) throw error;
+                console.warn(`${error.message}, retrying in ${retryDelays[attempt] / 1000}s`);
+                await new Promise(resolve => setTimeout(resolve, retryDelays[attempt]));
+            }
         }
-        const data = await response.json();
-        return data.response;
     }
 
     async getTagList() {
@@ -32,6 +41,19 @@ class SteamImporter{
             last_appid: lastAppId,
             max_results: maxResults
         });
+    }
+
+    async getAllAppIds(onPage) {
+        const appIds = [];
+        let lastAppId = 0;
+        while (true) {
+            const page = await this.getAppList(lastAppId);
+            for (const app of page.apps ?? []) appIds.push(app.appid);
+            if (onPage) onPage(appIds.length);
+            if(!page.have_more_results) break;
+            lastAppId = page.last_appid;
+        }
+        return appIds;
     }
 
     async getItems(appIds) {

@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">                                                                          <!-- Character set to make sure that odd characters don't break anything-->
-        <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">     <!-- Page will only load scripts from my own app files, no security warning in console-->
+        <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; img-src 'self' capsule:">     <!-- Page will only load scripts from my own app files, no security warning in console-->
         <title>Whaddaya Playin'?</title>                                                                <!-- Window title text-->
         <link rel="stylesheet" href="styles.css">                                                       <!-- Load the CSS file for styling-->
     </head>
@@ -16,6 +16,7 @@
                 <h2>Find Steam Games</h2>
                 <input id="searchBox" type="text" placeholder="Enter a game" autocomplete="off">
                 <ul id="searchResults"></ul>
+                <div id="capsuleList"></div>
             </section>
 
             <section id="rightColumn">
@@ -23,7 +24,10 @@
                     <h2>Currently Selected Games</h2>
                     <p id="emptyMessage">How sad, no games to recommend!</p>
                     <ul id="selectedList"></ul>
-                    <button id="recommendBtn" disabled>Recommend</button>
+                    <div id="recommendRow">
+                        <button id="recommendBtn" disabled>Recommend</button>
+                        <input id="countBox" type="number" min="1" max="100" placeholder="8" title="Number of Recommendations">
+                    </div>
                 </div>
                 <div id="resultsPanel" class="panel">
                     <p id="matchedGame"></p>
@@ -38,7 +42,7 @@
             <p id="status"></p>
             <button id="tutorialBtn" title="Tutorial">?</button>
         </footer>
-    <img id="mascot" src="assets/mascot.png" alt="">    
+    <img id="mascot" src="assets/mascot.png" alt="Mr. Chant">    
         <script src="renderer.js"></script>
     </body>
 </html>

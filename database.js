@@ -59,26 +59,9 @@ function storeTags(db, tags) {
   }
 }
 
-function storeGame(db,item) {
-  const reviews = item.reviews?.summary_filtered;
-  const totalReviews = reviews?.review_count ?? null;
-  const totalPositive = reviews ? Math.round(reviews.review_count * reviews.percent_positive/100) : null;
-  const reviewScore =  totalReviews ? totalPositive / totalReviews : null;
-
-  const releaseSeconds = item.release?.steam_release_date;
-  const releaseDate = releaseSeconds ? new Date(releaseSeconds*1000).toISOString().slice(0,10) : null;
-  
-  const priceCents = item.best_purchase_option?.final_price_in_cents;
-  const listedPrice = priceCents ? Number(priceCents)/100 : null;
-
-  const capsule = item.assets ? item.assets.asset_url_format.replace('${FILENAME}', item.assets.main_capsule) : null;
-
-  const developers = JSON.stringify((item.basic_info?.developers ?? []).map(d => d.name));
-  const publishers = JSON.stringify((item.basic_info?.publishers ?? []).map(p => p.name));
-
-db.exec('BEGIN');
-try{
-  db.prepare(
+function storeGames(db,items) {
+  const knownTags = new Set(db.prepare('SELECT tag_id FROM Tags').all().map(row=> row.tag_id));
+  const upsertGame = db.prepare(
     `INSERT INTO Games (game_id, name, developers, publishers, release_date, listed_price, capsule_image, total_positive, total_reviews, review_score, last_fetched)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
     ON CONFLICT(game_id) DO UPDATE SET
@@ -91,19 +74,43 @@ try{
       total_positive = excluded.total_positive,
       total_reviews = excluded.total_reviews,
       review_score = excluded.review_score,
-      last_fetched = excluded.last_fetched`).run(item.appid, item.name, developers, publishers, releaseDate, listedPrice, capsule, totalPositive, totalReviews, reviewScore);
-
-  db.prepare('DELETE FROM GameTags WHERE game_id = ?').run(item.appid);
+      last_fetched = excluded.last_fetched`);
+  const clearTags = db.prepare('DELETE FROM GameTags WHERE game_id = ?');
   const insertTag = db.prepare('INSERT INTO GameTags (game_id, tag_id, score) VALUES (?, ?, ?)');
-  (item.tags ?? []).forEach((tag, i) => {
-    insertTag.run(item.appid, tag.tagid, 20-i);
-  });
+  let unknownTags = 0;
 
-  db.exec('COMMIT');
+  db.exec('BEGIN');
+  try{
+    for (const item of items) {
+      const reviews = item.reviews?.summary_filtered;
+      const totalReviews = reviews?.review_count ?? null;
+      const totalPositive = reviews ? Math.round(reviews.review_count * reviews.percent_positive/100) : null;
+      const reviewScore =  totalReviews ? totalPositive / totalReviews : null;
+
+      const releaseSeconds = item.release?.steam_release_date;
+      const releaseDate = releaseSeconds ? new Date(releaseSeconds*1000).toISOString().slice(0,10) : null;
+  
+      const priceCents = item.best_purchase_option?.final_price_in_cents;
+      const listedPrice = priceCents ? Number(priceCents)/100 : null;
+
+      const capsule = item.assets ? item.assets.asset_url_format.replace('${FILENAME}', item.assets.main_capsule) : null;
+
+      const developers = JSON.stringify((item.basic_info?.developers ?? []).map(d => d.name));
+      const publishers = JSON.stringify((item.basic_info?.publishers ?? []).map(p => p.name));
+
+      upsertGame.run(item.appid, item.name, developers, publishers, releaseDate, listedPrice, capsule, totalPositive, totalReviews, reviewScore);
+      clearTags.run(item.appid);
+      (item.tags ?? []).forEach((tag, i) => {
+        if (!knownTags.has(tag.tagid)) { unknownTags++; return; }
+        insertTag.run(item.appid, tag.tagid, 20 - i);
+      });
+    }
+    db.exec('COMMIT');
   } catch(error) {
   db.exec('ROLLBACK');
   throw error;
   }
+  return unknownTags;
 }
 
 //IDF is computed as ln(N/df) where N is the total number of games and df is the number of games with that tag. This is used to weight tags in the recommendation algorithm.
@@ -116,4 +123,4 @@ function computeIdf(db) {
     WHERE GameTags.tag_id = Tags.tag_id)`);
 }
 
-module.exports = { openDatabase, storeTags, storeGame, computeIdf };
+module.exports = { openDatabase, storeTags, storeGames, computeIdf };
